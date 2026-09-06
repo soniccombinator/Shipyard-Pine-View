@@ -4,7 +4,7 @@ import { authorizeMediaAccess } from "@/lib/media/authorize-media-access";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
-const ALLOWED_BUCKETS = new Set(["resumes", "videos"]);
+const ALLOWED_BUCKETS = new Set(["resumes", "videos", "interviews"]);
 
 /**
  * Short-lived signed URL for a private resume/work-media file. See

@@ -24,6 +24,7 @@ export type CandidateMatch = {
   passportPublic: boolean;
   resumePath: string | null;
   videoPath: string | null;
+  recordingPath: string | null;
   myFeedback: FeedbackValue | null;
   theirFeedback: FeedbackValue | null;
 };
@@ -45,7 +46,8 @@ export async function getCandidatesForJob(jobId: string, viewerId: string): Prom
   if (!matches?.length) return [];
 
   const ids = matches.map((m) => m.employee_id as string);
-  const [{ data: profiles }, { data: employees }, { data: feedback }] = await Promise.all([
+  const matchIds = matches.map((m) => m.id as string);
+  const [{ data: profiles }, { data: employees }, { data: feedback }, { data: recordings }] = await Promise.all([
     supabase.from("profiles").select("id, full_name").in("id", ids),
     supabase
       .from("employee_profiles")
@@ -53,11 +55,13 @@ export async function getCandidatesForJob(jobId: string, viewerId: string): Prom
         "user_id, headline, about, city, state, remote_preference, abilities, accommodations, availability, awards, education, volunteer, passport_slug, passport_public, resume_path, video_path"
       )
       .in("user_id", ids),
-    supabase.from("match_feedback").select("match_id, user_id, value").in("match_id", matches.map((m) => m.id as string)),
+    supabase.from("match_feedback").select("match_id, user_id, value").in("match_id", matchIds),
+    supabase.from("interview_recordings").select("match_id, path").in("match_id", matchIds),
   ]);
   const nameById = new Map((profiles ?? []).map((p) => [p.id as string, p.full_name as string]));
   const employeeById = new Map((employees ?? []).map((e) => [e.user_id as string, e]));
   const fb = (feedback ?? []) as FeedbackRow[];
+  const recordingByMatch = new Map(((recordings ?? []) as { match_id: string; path: string }[]).map((r) => [r.match_id, r.path]));
 
   const out: CandidateMatch[] = [];
   for (const m of matches) {
@@ -84,6 +88,7 @@ export async function getCandidatesForJob(jobId: string, viewerId: string): Prom
       passportPublic: Boolean(e.passport_public),
       resumePath: e.resume_path ?? null,
       videoPath: e.video_path ?? null,
+      recordingPath: recordingByMatch.get(m.id as string) ?? null,
       myFeedback: feedbackFor(fb, m.id as string, viewerId),
       theirFeedback: feedbackFor(fb, m.id as string, e.user_id as string),
     });
