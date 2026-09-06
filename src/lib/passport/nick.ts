@@ -95,7 +95,7 @@ export type LivePassportContent = {
 };
 
 export const NICK: LivePassportContent = {
-  fullName: "Nick Labinsky",
+  fullName: "Nick Lapinski", // spelling confirmed by the team 2026-09-06; the film's badge reading in docs/video-analysis is wrong
   headline: "Service porter at Sarasota Ford. I prep cars and get them ready to sell.",
   city: "Sarasota",
   state: "FL",

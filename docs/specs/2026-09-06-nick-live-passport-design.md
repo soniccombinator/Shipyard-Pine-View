@@ -19,7 +19,8 @@ design; desktop is the secondary one.
 - Source of truth for facts is the film *Nick's Story: The Drive to Include*
   (`public/stories/nick.mp4`, captions in `public/stories/nick.vtt`) and the
   editorial notes in `docs/video-analysis/`. Facts the film establishes: name
-  as shown on his badge (Nick Labinsky), age 25, service porter at Sarasota Ford,
+  (Nick Lapinski, spelling confirmed by the team on 2026-09-06; the badge reading
+  in `docs/video-analysis/` is wrong), age 25, service porter at Sarasota Ford,
   tasks shown on camera (detailing, decal removal, mounting plates, refueling,
   loaner check-in and keys, vehicle logs, driving and parking, vacuuming), what
   colleagues and his manager said, and his own words ("Doing my job is fun").
