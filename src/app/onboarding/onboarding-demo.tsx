@@ -27,7 +27,7 @@ export function OnboardingDemo() {
 
   function start(m: "voice" | "text") {
     setMode(m);
-    setLines([{ id: 0, who: "guide", text: "Hi Nick! I'm your Passport Guide. I'll ask a few easy questions and build your Ability Passport as we go. Ready?" }]);
+    setLines([{ id: 0, who: "guide", text: "Hi Nick. I'm your Passport Guide. We can go slowly. I'll ask one easy question at a time, and I'll build your Ability Passport as we go. Take your time with each answer. You can stop whenever you want. Would you like to start?" }]);
   }
 
   function send() {
