@@ -16,6 +16,9 @@ export const SITE_URL = (
 
 export const SITE_NAME = "ConnectAble";
 
+/** Regenerate public/partner QR assets after changing this responder URL. */
+export const PARTNER_FORM_URL = "https://forms.gle/qHUJ6irF4o8W2swR9";
+
 /** Human sentence used as the default meta description / OG description. */
 export const SITE_DESCRIPTION =
   "ConnectAble connects people with intellectual and developmental disabilities to employers who can support them, with mentors as the bridge.";

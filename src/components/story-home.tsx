@@ -7,6 +7,7 @@ import { ArrowDown, ArrowRight, ArrowUpRight, Check, Menu, MessageCircle, Play, 
 import styles from "./story-home.module.css";
 import { FAQ } from "./story-home-faq";
 import { Wordmark } from "./wordmark";
+import { PARTNER_FORM_URL } from "@/lib/site";
 
 const films = {
   nick: { title: "Nick’s story: The Drive to Include", file: "nick", portrait: false },
@@ -101,6 +102,7 @@ export function StoryHome({ className = "" }: { className?: string }) {
         <Link href="/" className={styles.logoLink} aria-label="ConnectAble.work home"><Wordmark /></Link>
         <nav aria-label="Main navigation" className={styles.navigation}>
           <a href="#stories">Our stories</a><a href="#how-it-works">Your Ability Passport</a><a href="#our-purpose">Our purpose</a>
+          <a href={PARTNER_FORM_URL} target="_blank" rel="noopener noreferrer">Partner with us<span className="sr-only"> (opens in a new tab)</span></a>
         </nav>
         <div className={styles.headerActions}>
           <Link href="/login" className={styles.login}>Log in</Link>
@@ -108,7 +110,9 @@ export function StoryHome({ className = "" }: { className?: string }) {
           <button ref={menuTrigger} className={styles.menuToggle} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
         </div>
         {menuOpen && <nav id="mobile-navigation" aria-label="Mobile navigation" className={styles.mobileNavigation}>
-          <a href="#stories" onClick={() => setMenuOpen(false)}>Our stories <ArrowUpRight size={18} /></a><a href="#how-it-works" onClick={() => setMenuOpen(false)}>Your Ability Passport <ArrowUpRight size={18} /></a><a href="#our-purpose" onClick={() => setMenuOpen(false)}>Our purpose <ArrowUpRight size={18} /></a><Link href="/login" onClick={() => setMenuOpen(false)}>Log in <ArrowUpRight size={18} /></Link>
+          <a href="#stories" onClick={() => setMenuOpen(false)}>Our stories <ArrowUpRight size={18} /></a><a href="#how-it-works" onClick={() => setMenuOpen(false)}>Your Ability Passport <ArrowUpRight size={18} /></a><a href="#our-purpose" onClick={() => setMenuOpen(false)}>Our purpose <ArrowUpRight size={18} /></a>
+          <a href={PARTNER_FORM_URL} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>Partner with us<span className="sr-only"> (opens in a new tab)</span><ArrowUpRight size={18} aria-hidden="true" /></a>
+          <Link href="/login" onClick={() => setMenuOpen(false)}>Log in <ArrowUpRight size={18} /></Link>
         </nav>}
       </header>
       <main id="main">
@@ -181,6 +185,24 @@ export function StoryHome({ className = "" }: { className?: string }) {
         <section className={styles.faq} aria-labelledby="faq-title" data-reveal><div><p className={styles.sectionLabel}>A few helpful answers</p><h2 id="faq-title">A new beginning<br />can start with a question.</h2></div><div>{FAQ.map(([question, answer]) => <details key={question}><summary>{question}<Plus size={19} aria-hidden="true" /></summary><p>{answer}</p></details>)}</div></section>
 
         <section id="get-started" className={styles.finalCta} aria-labelledby="start-title"><div data-reveal><p className={styles.sectionLabel}><span>03</span> There’s a place for you here</p><h2 id="start-title">The next story<br />could be <span>yours.</span></h2></div><div className={styles.roleLinks} data-reveal><Link href="/signup?role=employee"><span><small>FOR JOB SEEKERS</small>I’m ready for my next step</span><ArrowUpRight aria-hidden="true" /></Link><Link href="/signup?role=employer"><span><small>FOR EMPLOYERS</small>I want to build an inclusive team</span><ArrowUpRight aria-hidden="true" /></Link><Link href="/signup?role=mentor"><span><small>FOR MENTORS</small>I’m here to help someone grow</span><ArrowUpRight aria-hidden="true" /></Link></div></section>
+        <section id="partner-with-us" className={styles.partnerSection} aria-labelledby="partner-title">
+          <div className={styles.partnerCopy}>
+            <p className={styles.sectionLabel}>For investors and partners</p>
+            <h2 id="partner-title">Help the next story happen.</h2>
+            <p>Interested in investing in or partnering with ConnectAble? Tell us a little about yourself and how you would like to get involved.</p>
+            <a href={PARTNER_FORM_URL} target="_blank" rel="noopener noreferrer" className={styles.darkButton}>Partner with us<span className="sr-only"> (opens in a new tab)</span><ArrowUpRight size={20} aria-hidden="true" /></a>
+          </div>
+          <figure className={styles.partnerQr}>
+            <a href={PARTNER_FORM_URL} target="_blank" rel="noopener noreferrer" aria-label="Open the partner interest form (opens in a new tab)">
+              <Image src="/partner/interest-qr.svg" alt="QR code for the ConnectAble partner interest form" width={184} height={184} unoptimized />
+            </a>
+            <figcaption>Scan to share your interest</figcaption>
+            <div className={styles.qrDownloads}>
+              <a href="/partner/interest-qr.png" download="connectable-partner-interest-qr.png">Download QR</a>
+              <a href="/partner/interest-qr.svg" download="connectable-partner-interest-qr.svg">SVG for print</a>
+            </div>
+          </figure>
+        </section>
       </main>
 
       <footer className={styles.footer}>
@@ -190,7 +212,7 @@ export function StoryHome({ className = "" }: { className?: string }) {
           <a href="tel:+19412394045">+1 941-239-4045</a>
           <a href="mailto:info@connectable.work">info@connectable.work</a>
         </address>
-        <nav aria-label="Footer navigation"><Link href="/about">About</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><a href="#main" aria-label="Back to top"><ArrowRight size={19} className={styles.backToTop} /></a></nav>
+        <nav aria-label="Footer navigation"><a href={PARTNER_FORM_URL} target="_blank" rel="noopener noreferrer">Partner with us<span className="sr-only"> (opens in a new tab)</span></a><Link href="/about">About</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><a href="#main" aria-label="Back to top"><ArrowRight size={19} className={styles.backToTop} /></a></nav>
       </footer>
 
       <dialog ref={dialog} className={styles.filmDialog} onCancel={(event) => { event.preventDefault(); closeFilm(); }} onClose={() => { setActiveFilm(null); trigger.current?.focus(); }} aria-labelledby="film-title">
