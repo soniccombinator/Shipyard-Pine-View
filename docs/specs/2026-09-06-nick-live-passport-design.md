@@ -61,9 +61,14 @@ section of `src/components/story-home.tsx`.
 **Header:** ConnectAble wordmark linking home; "Get your own Passport" button to
 `/signup`. Same pattern as `src/app/p/[slug]/page.tsx`.
 
-**Intro (not sticky):** eyebrow "Ability Passport · Live"; name; headline
-"Service porter at Sarasota Ford. I prep cars and get them ready to sell.";
-Sarasota, FL · In person. One sentence inviting the reader to scroll.
+**Intro (not sticky), revised 2026-09-06 after review ("the page had no
+emotion"):** eyebrow "Ability Passport · Live"; name; Nick's own introduction
+from the film as a quotation ("My job at Sarasota Ford is a service porter where
+I prep cars and get them ready to sell."); Sarasota, FL · In person; then a
+large "Watch Nick's story · 3:08" button on the still of Nick and a colleague
+smiling, which opens the full film (`/stories/nick.mp4`, captions
+`/stories/nick.vtt`) in the modal. The film is fetched only when tapped. One
+line inviting the reader to scroll.
 
 **Scrolly section.**
 
@@ -78,9 +83,15 @@ Three chapters, each tied to one clip:
 
 | # | Name | Clip | Content |
 |---|---|---|---|
-| 01 | The work | Detailing | Abilities as chips (vehicle detailing, interior cleaning, decal and sticker removal, mounting license plates, refueling, loaner check-in and keys, vehicle logs, driving and parking). Short professional summary. His own words: "Doing my job is fun." |
-| 02 | Experience | Using drill | Work history: Service Porter, Sarasota Ford (start date PLACEHOLDER; "no job coach needed" as stated by his mother in the film); earlier detailing role (employer PLACEHOLDER; Beaver: "the best detail guy they ever had"). "What colleagues say": Sebastian Mattos (loaner department), Kevin (Sarasota Ford, former detailer), Veronica Izzo (Loaner Department Manager). |
-| 03 | Beyond the job | Vacuuming | Education and training (PLACEHOLDER). Interests from the film: music in the car, driving, getting to know the team. Availability (PLACEHOLDER). |
+| 01 | The work | Detailing | "Care in every detail." Abilities as chips (vehicle detailing, interior cleaning, decal and sticker removal, mounting license plates, refueling, loaner check-in and keys, vehicle logs, driving and parking). Short professional summary. Beaver Shriver, verbatim: "I learned that Nick was the best detail guy they ever had, so I thought, well, I know exactly who I'm going to call." |
+| 02 | The people | Using drill | "Someone to share the day with." The team photo from the film, then the team in the film's order, verbatim and credited: Veronica Izzo (in the car together, lunch together), Jordan Cardenas (music, "can't wait to have another person like him on the team"), Sebastian Mattos ("learned faster than I did"), Kevin ("every dealership needs somebody like Nick"). |
+| 03 | In his own words | Vacuuming | "More than a job." Nick, large: "Doing my job is fun. A big thank you to Beaver for getting my job at Sarasota Ford." Then his mother, Sara Brooks, on the job he loves and no longer needing a job coach. |
+
+The chapters follow the film's own arc (work, people, Nick) so the story carries
+the page. The resume facts come after in an **"At a glance"** block: experience
+(Service Porter, Sarasota Ford, start date PLACEHOLDER; earlier detailing role,
+employer and dates PLACEHOLDER), education (PLACEHOLDER), interests from the film,
+availability (PLACEHOLDER).
 
 **Contact:** name, email and phone (PLACEHOLDER, obviously fake), city.
 **Share:** reuse `PassportShare` from `src/components/passport/passport-qr.tsx`

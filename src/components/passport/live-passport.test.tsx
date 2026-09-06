@@ -1,7 +1,7 @@
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { CHAPTERS, CLIPS, NICK } from "@/lib/passport/nick";
+import { CHAPTERS, CLIPS, FILM, NICK } from "@/lib/passport/nick";
 import { LivePassport } from "./live-passport";
 
 type IOCallback = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => void;
@@ -65,17 +65,41 @@ function scrollToChapter(index: number) {
 }
 
 describe("LivePassport", () => {
-  it("renders the passport: name, headline, three chapters, abilities, quotes, contact, QR", () => {
+  it("renders the passport: name, his own intro, three chapters, abilities, every voice, contact, QR", () => {
     render(<LivePassport />);
     expect(screen.getByRole("heading", { level: 1, name: NICK.fullName })).toBeInTheDocument();
-    expect(screen.getByText(NICK.headline)).toBeInTheDocument();
+    expect(screen.getByText(`“${NICK.ownIntro}”`)).toBeInTheDocument();
     for (const chapter of CHAPTERS) {
       expect(screen.getByRole("heading", { level: 2, name: chapter.title })).toBeInTheDocument();
     }
     for (const ability of NICK.abilities) expect(screen.getByText(ability)).toBeInTheDocument();
-    for (const quote of NICK.quotes) expect(screen.getByText(`“${quote.text}”`)).toBeInTheDocument();
+    for (const quote of [NICK.referral, ...NICK.quotes, NICK.family]) {
+      expect(screen.getByText(`“${quote.text}”`)).toBeInTheDocument();
+      expect(screen.getByText(quote.name)).toBeInTheDocument();
+    }
+    expect(screen.getByText(`“${NICK.ownWords}”`)).toBeInTheDocument();
+    expect(screen.getByAltText(NICK.teamPhoto.alt)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: /At a glance/ })).toBeInTheDocument();
+    expect(screen.getByText(NICK.experience[0].title)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: NICK.contact.email })).toHaveAttribute("href", `mailto:${NICK.contact.email}`);
     expect(screen.getByRole("img", { name: /QR code that opens/ })).toBeInTheDocument();
+  });
+
+  it("plays the full film with captions from the intro and restores focus on close", () => {
+    const { container } = render(<LivePassport />);
+    const opener = screen.getByRole("button", { name: /Watch Nick’s story/ });
+    opener.focus();
+    expect(container.querySelector(`video[src="${FILM.src}"]`)).toBeNull();
+    fireEvent.click(opener);
+    expect(screen.getByRole("dialog")).toHaveAttribute("open");
+    expect(screen.getByRole("heading", { level: 2, name: FILM.title })).toBeInTheDocument();
+    const player = container.querySelector(`video[src="${FILM.src}"]`);
+    expect(player).toHaveAttribute("controls");
+    expect(player).not.toHaveAttribute("loop");
+    expect(player?.querySelector("track")).toHaveAttribute("src", FILM.captions);
+    fireEvent.click(screen.getByRole("button", { name: "Close video" }));
+    expect(container.querySelector(`video[src="${FILM.src}"]`)).toBeNull();
+    expect(opener).toHaveFocus();
   });
 
   it("never shows accommodations or pay", () => {

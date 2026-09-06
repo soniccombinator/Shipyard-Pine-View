@@ -2,10 +2,10 @@ import type { HistoryItem } from "@/lib/domain";
 import { SITE_URL } from "@/lib/site";
 
 /**
- * Nick's live Ability Passport. Facts come from the film "Nick's Story: The
- * Drive to Include" (public/stories/nick.mp4, captions in nick.vtt) and the
- * notes in docs/video-analysis/. Quotes are verbatim and credited the way the
- * film credits them.
+ * Nick's live Ability Passport. Facts and every quote come from the film
+ * "Nick's Story: The Drive to Include" (public/stories/nick.mp4, captions in
+ * nick.vtt) and the notes in docs/video-analysis/. Quotes are verbatim, with
+ * spoken filler trimmed, and credited the way the film credits them.
  *
  * PLACEHOLDERS, made up, replace before the demo:
  *   NICK.experience[0].period       start date at Sarasota Ford
@@ -60,34 +60,64 @@ export const CLIPS: Clip[] = [
   },
 ];
 
+/** The full film, already on the homepage; here it is the emotional centre of the page. */
+export type Film = {
+  title: string;
+  src: string;
+  captions: string;
+  poster: string;
+  posterAlt: string;
+  duration: string;
+};
+
+export const FILM: Film = {
+  title: "Nick’s story: The Drive to Include",
+  src: "/stories/nick.mp4",
+  captions: "/stories/nick.vtt",
+  poster: "/stories/nick-team.jpg",
+  posterAlt: "Nick and a colleague sharing a smile at Sarasota Ford",
+  duration: "3:08",
+};
+
 export type Chapter = {
-  id: "work" | "experience" | "beyond";
+  id: "work" | "people" | "words";
   number: string;
   name: string;
   title: string;
   clip: ClipId;
 };
 
+/** Chapters follow the film's own arc: the work, then the people, then Nick. */
 export const CHAPTERS: Chapter[] = [
-  { id: "work", number: "01", name: "The work", title: "Cars ready to sell, down to the last detail.", clip: "detailing" },
-  { id: "experience", number: "02", name: "Experience", title: "Learned fast. Trusted with the fleet.", clip: "drill" },
-  { id: "beyond", number: "03", name: "Beyond the job", title: "Music in the car. Lunch with the team.", clip: "vacuuming" },
+  { id: "work", number: "01", name: "The work", title: "Care in every detail.", clip: "detailing" },
+  { id: "people", number: "02", name: "The people", title: "Someone to share the day with.", clip: "drill" },
+  { id: "words", number: "03", name: "In his own words", title: "More than a job.", clip: "vacuuming" },
 ];
 
 export type Quote = { text: string; name: string; role: string };
+export type Photo = { src: string; alt: string; caption: string };
 export type Experience = { title: string; org: string; period: string; details: string[] };
 
 export type LivePassportContent = {
   fullName: string;
   headline: string;
+  /** Nick introducing himself, verbatim from the film's opening. */
+  ownIntro: string;
+  /** Nick's closing words in the film. */
+  ownWords: string;
   city: string;
   state: string;
   remote: "In person";
   summary: string;
-  ownWords: string;
   abilities: string[];
-  experience: Experience[];
+  /** How the job came about, in Beaver Shriver's words. */
+  referral: Quote;
+  /** The team, in the film's order. */
   quotes: Quote[];
+  /** Nick's mother. */
+  family: Quote;
+  teamPhoto: Photo;
+  experience: Experience[];
   education: HistoryItem[];
   interests: string[];
   availability: string[];
@@ -97,12 +127,13 @@ export type LivePassportContent = {
 export const NICK: LivePassportContent = {
   fullName: "Nick Lapinski", // spelling confirmed by the team 2026-09-06; the film's badge reading in docs/video-analysis is wrong
   headline: "Service porter at Sarasota Ford. I prep cars and get them ready to sell.",
+  ownIntro: "My job at Sarasota Ford is a service porter where I prep cars and get them ready to sell.",
+  ownWords: "Doing my job is fun. A big thank you to Beaver for getting my job at Sarasota Ford.",
   city: "Sarasota",
   state: "FL",
   remote: "In person",
   summary:
     "Nick preps and details vehicles at Sarasota Ford: removing stickers and transport film, mounting plates, refueling, checking loaner cars in and out, and keeping the logs straight. He is consistent, picks up new workflows quickly, and his teammates count on him.",
-  ownWords: "Doing my job is fun.",
   abilities: [
     "Vehicle detailing",
     "Interior cleaning",
@@ -113,6 +144,43 @@ export const NICK: LivePassportContent = {
     "Vehicle logs and paperwork",
     "Driving and parking vehicles",
   ],
+  referral: {
+    text: "I learned that Nick was the best detail guy they ever had, so I thought, well, I know exactly who I’m going to call.",
+    name: "Beaver Shriver",
+    role: "Founder, Inclusion Revolution",
+  },
+  quotes: [
+    {
+      text: "Nick has been doing a wonderful job. He’s extremely consistent. The team has become very close. They’re in the car a lot together, chatting. They go to lunch together as well with Nick.",
+      name: "Veronica Izzo",
+      role: "Loaner Department Manager, Sarasota Ford",
+    },
+    {
+      text: "I first met Nick a couple days into him being on our team. We drive, listen to music, he talks about what he likes. I can’t wait to have another person like him on the team.",
+      name: "Jordan Cardenas",
+      role: "Service Porter, Sarasota Ford",
+    },
+    {
+      text: "It’s actually impressive how fast he learned how to do all these things with these loaner vehicles. I would even say that he actually learned faster than I did in the past.",
+      name: "Sebastian Mattos",
+      role: "Loaner department, Sarasota Ford",
+    },
+    {
+      text: "I used to do detailing a lot, but Nick is by far the best in my opinion. I think every dealership needs somebody like Nick.",
+      name: "Kevin",
+      role: "Sarasota Ford",
+    },
+  ],
+  family: {
+    text: "We were so, so, so thankful for Nick to have an opportunity to do something that he loved. This is probably one of the first jobs where Nick is so supported by all of the employees and by his supervisor that he doesn’t even have a job coach at this point.",
+    name: "Sara Brooks",
+    role: "Nick’s mom",
+  },
+  teamPhoto: {
+    src: "/stories/nick-team.jpg",
+    alt: "Nick and a colleague sharing a smile at Sarasota Ford",
+    caption: "Sarasota Ford, from the film",
+  },
   experience: [
     {
       title: "Service Porter",
@@ -129,24 +197,6 @@ export const NICK: LivePassportContent = {
       org: "Gulf Coast Auto Spa", // PLACEHOLDER
       period: "2022 – 2024", // PLACEHOLDER
       details: ["Detailed vehicles to a standard his manager called “the best detail guy they ever had.”"],
-    },
-  ],
-  quotes: [
-    {
-      text:
-        "It’s actually impressive how fast he learned how to do all these things with these loaner vehicles. I would even say that he actually learned faster than I did in the past.",
-      name: "Sebastian Mattos",
-      role: "Loaner department, Sarasota Ford",
-    },
-    {
-      text: "I used to do detailing a lot, but Nick is by far the best in my opinion. I think every dealership needs somebody like Nick.",
-      name: "Kevin",
-      role: "Sarasota Ford",
-    },
-    {
-      text: "Nick has been doing a wonderful job. He’s extremely consistent. The team has become very close.",
-      name: "Veronica Izzo",
-      role: "Loaner Department Manager, Sarasota Ford",
     },
   ],
   education: [
