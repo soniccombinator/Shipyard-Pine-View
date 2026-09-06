@@ -7,23 +7,31 @@ import { PassportGuide, type GuideStorage } from "@/components/agent/passport-gu
 import { TextOnboarding } from "@/components/agent/text-onboarding";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { initialGuideMode, type GuideMode } from "./guide-modes";
 
-type GuideMode = "voice" | "text";
-type Props = { userId: string | null; fullName: string; siteUrl: string; voiceAvailable: boolean };
+type Props = {
+  userId: string | null;
+  fullName: string;
+  siteUrl: string;
+  voiceAvailable: boolean;
+  textAvailable: boolean;
+};
 
 /**
  * Picks who is talking (name, when there is no account yet) and how
  * (voice or text), then hands off to the guide.
  */
-export function OnboardingClient({ userId, fullName: knownName, siteUrl, voiceAvailable }: Props) {
+export function OnboardingClient({ userId, fullName: knownName, siteUrl, voiceAvailable, textAvailable }: Props) {
   const storage: GuideStorage = userId ? "supabase" : "local";
   const [name, setName] = useState(knownName);
   const [draftName, setDraftName] = useState("");
-  // When voice isn't configured, there's only one real choice -- don't make
-  // someone click through a chooser to discover the other option is
-  // disabled. Skip straight to text. If voice is ever configured, this
-  // still shows the real chooser so people can pick either.
-  const [mode, setMode] = useState<GuideMode | null>(voiceAvailable ? null : "text");
+  // When only one way of talking is configured, don't make someone click
+  // through a chooser to discover the other button is disabled -- skip
+  // straight to the one that works. With both configured, show the chooser.
+  const bothAvailable = voiceAvailable && textAvailable;
+  const [mode, setMode] = useState<GuideMode | null>(
+    initialGuideMode({ voice: voiceAvailable, text: textAvailable }),
+  );
   const first = name.split(" ")[0] || "there";
 
   if (!name) {
@@ -71,11 +79,14 @@ export function OnboardingClient({ userId, fullName: knownName, siteUrl, voiceAv
           </button>
           <button
             type="button"
-            onClick={() => setMode("text")}
-            className="flex flex-col items-center gap-3 rounded-xl border-2 p-8 text-lg font-bold hover:border-green hover:bg-green-soft"
+            onClick={() => textAvailable && setMode("text")}
+            disabled={!textAvailable}
+            aria-disabled={!textAvailable}
+            className="flex flex-col items-center gap-3 rounded-xl border-2 p-8 text-lg font-bold hover:border-green hover:bg-green-soft disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-inherit disabled:hover:bg-transparent"
           >
             <Keyboard aria-hidden="true" className="size-10 text-green" />
             Type instead
+            {!textAvailable && <span className="text-sm font-normal text-muted-foreground">Not set up yet -- try talking instead.</span>}
           </button>
         </div>
         <p className="text-sm text-muted-foreground">
@@ -99,9 +110,9 @@ export function OnboardingClient({ userId, fullName: knownName, siteUrl, voiceAv
         <TextOnboarding userId={userId ?? "local-user"} fullName={name} siteUrl={siteUrl} storage={storage} />
       )}
       {/* Only offer to change modes when there's a real second mode to switch
-          to -- with voice unavailable, "changing" would just restart the
-          same text conversation and lose whatever was already typed. */}
-      {voiceAvailable && (
+          to -- otherwise "changing" would just restart the same conversation
+          and lose whatever was already said or typed. */}
+      {bothAvailable && (
         <button type="button" onClick={() => setMode(null)} className="self-start text-sm font-bold text-green underline">
           Change how we talk
         </button>

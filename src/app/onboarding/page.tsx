@@ -4,6 +4,7 @@ import { Wordmark } from "@/components/wordmark";
 import { hasAnthropicEnv, hasElevenLabsEnv, hasSupabaseEnv } from "@/lib/env";
 import { SITE_URL } from "@/lib/sample";
 import { createClient } from "@/lib/supabase/server";
+import { hasRealGuide } from "./guide-modes";
 import { OnboardingClient } from "./onboarding-client";
 import { OnboardingDemo } from "./onboarding-demo";
 
@@ -24,6 +25,10 @@ export default async function OnboardingPage() {
     }
   }
 
+  // Voice and typing are separate services; either one alone is enough for
+  // the real guide. The scripted demo is only for a deployment with neither.
+  const available = { voice: hasElevenLabsEnv(), text: hasAnthropicEnv() };
+
   return (
     <div className="ap-site flex flex-1 flex-col">
       <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md">
@@ -35,8 +40,14 @@ export default async function OnboardingPage() {
         </div>
       </header>
       <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
-        {hasAnthropicEnv() ? (
-          <OnboardingClient userId={userId} fullName={fullName} siteUrl={SITE_URL} voiceAvailable={hasElevenLabsEnv()} />
+        {hasRealGuide(available) ? (
+          <OnboardingClient
+            userId={userId}
+            fullName={fullName}
+            siteUrl={SITE_URL}
+            voiceAvailable={available.voice}
+            textAvailable={available.text}
+          />
         ) : (
           <div className="mx-auto max-w-3xl">
             <OnboardingDemo />
