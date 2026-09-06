@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowRight, ArrowUpRight, Check, Menu, MessageCircle, Play, Plus, X } from "lucide-react";
 import styles from "./story-home.module.css";
 import { FAQ } from "./story-home-faq";
+import { Wordmark } from "./wordmark";
 
 const films = {
   nick: { title: "Nick’s story: The Drive to Include", file: "nick", portrait: false },
@@ -31,15 +32,6 @@ const chapters = [
     image: "/stories/nick-driving.jpg", alt: "Nick at the wheel of a vehicle in the film", time: 158, locator: "02:38",
   },
 ];
-
-function Wordmark({ large = false }: { large?: boolean }) {
-  return (
-    <span className={`${styles.wordmark} ${large ? styles.wordmarkLarge : ""}`} role="img" aria-label="ConnectAble.work">
-      <span className={styles.brandName} aria-hidden="true"><span>Connect</span><span>Able</span></span>
-      <span className={styles.brandWork} aria-hidden="true"><i />.work<i /></span>
-    </span>
-  );
-}
 
 export function StoryHome({ className = "" }: { className?: string }) {
   const [activeFilm, setActiveFilm] = useState<FilmId | null>(null);
@@ -125,7 +117,7 @@ export function StoryHome({ className = "" }: { className?: string }) {
           <div className={styles.heroShade} />
           <div className={styles.heroContent}>
             <p className={styles.eyebrow}><span /> Every ability. A place to belong.</p>
-            <h1 id="hero-title" aria-label="ConnectAble.work"><Wordmark large /></h1>
+            <h1 id="hero-title" aria-label="ConnectAble.work"><Wordmark className={styles.heroWordmark} /></h1>
             <p className={styles.heroPromise}>A job is a beginning.<br />Belonging is what comes next.</p>
             <p className={styles.heroDescription}>Real people. Meaningful work.<br />And the connections that change an ordinary day.</p>
             <button className={styles.watchButton} onClick={(event) => openFilm("nick", event.currentTarget)} aria-label="Meet Nick, watch his story, 3 minutes"><span className={styles.playCircle}><Play size={18} fill="currentColor" aria-hidden="true" /></span><span>Meet Nick <small>Watch his story · 3:08</small></span><ArrowUpRight size={21} className={styles.watchArrow} aria-hidden="true" /></button>
@@ -154,7 +146,8 @@ export function StoryHome({ className = "" }: { className?: string }) {
               </div>
               <div id="nick-chapter-panel" role="tabpanel" aria-labelledby={`chapter-tab-${activeChapter}`} className={styles.chapterPanel}>
                 <div key={chapter.name} className={styles.chapterText}><h3>{chapter.title}</h3><p>{chapter.text}</p></div>
-                <button className={styles.textButton} onClick={(event) => openFilm("nick", event.currentTarget, chapter.time)}><Play size={15} fill="currentColor" aria-hidden="true" /> Watch this moment <span>{chapter.locator}</span><ArrowUpRight size={18} aria-hidden="true" /></button>
+                <button className={styles.textButton} onClick={(event) => openFilm("nick", event.currentTarget, chapter.time)}><Play size={15} fill="currentColor" aria-hidden="true" /> Watch this moment <span>{chapter.locator}</span><ArrowUpRight size={18} aria-hidden="true" /></button>{" "}
+                <Link href="/nick" className={styles.textButton}>See Nick’s live Ability Passport <ArrowUpRight size={18} aria-hidden="true" /></Link>
               </div><span className={styles.storyByline}>One person. A whole new chapter.</span>
             </div>
           </div>
@@ -170,7 +163,7 @@ export function StoryHome({ className = "" }: { className?: string }) {
 
         <section id="how-it-works" className={styles.passportSection} aria-labelledby="passport-title">
           <div className={styles.passportCopy} data-reveal><p className={styles.sectionLabel}><span>02</span> Now, your next chapter</p><h2 id="passport-title">Your story.<br />Your strengths.<br /><span>Your Ability Passport.</span></h2><p>There’s more to you than a résumé. Bring your abilities, experience, and the things that help you do your best work into one shareable profile.</p><Link href="/signup?role=employee" className={styles.darkButton}>Create my Ability Passport <ArrowUpRight size={20} aria-hidden="true" /></Link><span className={styles.passportHint}><MessageCircle size={16} aria-hidden="true" /> Talk or type. One question at a time.</span></div>
-          <div className={styles.passportDetail} data-reveal><div className={styles.passportSheet}><div className={styles.passportSheetTop}><Wordmark /><span>ABILITY<br />PASSPORT</span></div><h3>A little more about you.</h3><p>A place for what makes you, you.</p>{[
+          <div className={styles.passportDetail} data-reveal><div className={styles.passportSheet}><div className={styles.passportSheetTop}><Wordmark className={styles.sheetWordmark} /><span>ABILITY<br />PASSPORT</span></div><h3>A little more about you.</h3><p>A place for what makes you, you.</p>{[
             ["Your abilities", "The things you’re good at"], ["Your experience", "Work, learning, and proud moments"], ["Your accommodations", "What helps you do your best work"], ["Your own words", "The story only you can tell"],
           ].map(([label, text]) => <div className={styles.passportField} key={label}><Check size={18} aria-hidden="true" /><div><strong>{label}</strong><span>{text}</span></div></div>)}<div className={styles.passportSheetFooter}>Made to share. Made to grow with you.<ArrowUpRight size={20} aria-hidden="true" /></div></div><p className={styles.guideNote}>Your Passport Guide helps you find the words.<br />You decide if they sound right.</p></div>
         </section>

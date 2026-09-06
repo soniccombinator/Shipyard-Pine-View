@@ -53,3 +53,6 @@ next-env.d.ts
 
 # agent setup notes and stale plans stay local
 /docs/agent/
+
+# raw 4K clip exports, never commit
+/Clips of Nick Working*/

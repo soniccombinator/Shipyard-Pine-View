@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Atkinson_Hyperlegible } from "next/font/google";
+import { Atkinson_Hyperlegible, Poppins } from "next/font/google";
 import { ConsentBanner } from "@/components/consent-banner";
 import { Toaster } from "@/components/ui/sonner";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
@@ -10,6 +10,14 @@ const atkinson = Atkinson_Hyperlegible({
   weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
+});
+
+// Typeface of the ConnectAble.work logo (see components/wordmark); nothing else uses it.
+const poppins = Poppins({
+  weight: ["300", "400", "600"],
+  subsets: ["latin"],
+  variable: "--font-brand",
   display: "swap",
 });
 
@@ -52,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${atkinson.variable} h-full antialiased`}>
+    <html lang="en" className={`${atkinson.variable} ${poppins.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <a
           href="#main"

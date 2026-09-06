@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EmployerOnboardingClient } from "@/components/agent/employer-onboarding-client";
+import { Wordmark } from "@/components/wordmark";
 import type { Role } from "@/lib/domain";
 import { hasAnthropicEnv, hasElevenLabsEnv, hasSupabaseEnv } from "@/lib/env";
 import { SITE_URL } from "@/lib/sample";
@@ -31,12 +32,7 @@ export default async function OnboardingPage() {
     <div className="ap-site flex flex-1 flex-col">
       <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <span className="flex items-center gap-2">
-            <span className="ap-logo-mark" aria-hidden="true">
-              C
-            </span>
-            <span className="text-2xl font-extrabold tracking-tight text-green">ConnectAble</span>
-          </span>
+          <Wordmark className="[--wordmark-size:1.1rem]" />
           <Button variant="ghost" className="rounded-full" render={<Link href="/app" />}>
             Skip for now
           </Button>

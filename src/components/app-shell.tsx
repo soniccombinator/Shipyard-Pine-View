@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Briefcase, FilePlus2, Home, IdCard, LogOut, SquarePen, Star } from "lucide-react";
 import { ROLE_LABELS, RoleBadge } from "@/components/role-badge";
 import { Button } from "@/components/ui/button";
+import { Wordmark } from "@/components/wordmark";
 import { signOut } from "@/lib/auth/actions";
 import type { CurrentProfile } from "@/lib/data/profile";
 import type { Role } from "@/lib/domain";
@@ -48,11 +49,8 @@ export function AppShell({ profile, children }: { profile: CurrentProfile; child
     <div className="ap-app flex flex-1 flex-col md:pl-[248px]">
       {/* Desktop: left sidebar */}
       <aside className="ap-sidebar hidden md:flex print:hidden">
-        <Link href={home} className="mb-4 flex items-center gap-2 px-2 py-1">
-          <span className="ap-logo-mark" aria-hidden="true">
-            C
-          </span>
-          <span className="text-lg font-extrabold tracking-tight text-green">ConnectAble</span>
+        <Link href={home} className="mb-4 inline-flex self-start rounded-md px-2 py-1 [--wordmark-size:1rem]" aria-label="ConnectAble home">
+          <Wordmark />
         </Link>
         <nav aria-label="App" className="flex flex-1 flex-col gap-1">
           {items.map((item) => {
@@ -91,11 +89,8 @@ export function AppShell({ profile, children }: { profile: CurrentProfile; child
 
       {/* Mobile: top bar */}
       <header className="flex items-center justify-between gap-3 border-b bg-background px-4 py-3 md:hidden print:hidden">
-        <Link href={home} className="flex items-center gap-2">
-          <span className="ap-logo-mark" aria-hidden="true">
-            C
-          </span>
-          <span className="text-base font-extrabold tracking-tight text-green">ConnectAble</span>
+        <Link href={home} className="inline-flex rounded-md [--wordmark-size:.95rem]" aria-label="ConnectAble home">
+          <Wordmark />
         </Link>
         <div className="flex items-center gap-2">
           <RoleBadge role={profile.role} />

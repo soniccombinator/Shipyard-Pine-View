@@ -2,8 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CONSENT_EVENT, getConsent, setConsent } from "@/lib/consent";
+
+/** Public showcase pages with nothing to type: the draft-saving ask would be noise there. */
+const NO_FORM_ROUTES = ["/nick"];
+
+export function hidesConsentBanner(pathname: string | null): boolean {
+  return NO_FORM_ROUTES.some((route) => pathname === route || pathname?.startsWith(`${route}/`) === true);
+}
 
 /**
  * Site-wide, one-time ask: may we save what you type on this device so you
@@ -15,6 +23,7 @@ export function ConsentBanner() {
   // Assume "decided" during SSR and first paint so nothing flashes; the
   // effect corrects it on the client.
   const [decided, setDecided] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     const sync = () => setDecided(getConsent() !== null);
@@ -23,7 +32,7 @@ export function ConsentBanner() {
     return () => window.removeEventListener(CONSENT_EVENT, sync);
   }, []);
 
-  if (decided) return null;
+  if (decided || hidesConsentBanner(pathname)) return null;
 
   return (
     <div

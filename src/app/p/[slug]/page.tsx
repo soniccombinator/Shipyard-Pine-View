@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PassportCard } from "@/components/passport/passport-card";
 import { PassportShare } from "@/components/passport/passport-qr";
 import { Button } from "@/components/ui/button";
+import { Wordmark } from "@/components/wordmark";
 import { getPublicPassport } from "@/lib/data/passport";
 import { SITE_URL } from "@/lib/sample";
 import { JsonLd, passportJsonLd } from "@/lib/seo/structured-data";
@@ -49,11 +50,8 @@ export default async function PassportPage({ params }: Params) {
       />
       <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md print:hidden">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-3">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="ap-logo-mark" aria-hidden="true">
-              C
-            </span>
-            <span className="text-2xl font-extrabold tracking-tight text-green">ConnectAble</span>
+          <Link href="/" className="inline-flex rounded-md [--wordmark-size:1.1rem]" aria-label="ConnectAble home">
+            <Wordmark />
           </Link>
           <Button variant="outline" className="rounded-full" render={<Link href="/signup" />}>
             Get your own Passport

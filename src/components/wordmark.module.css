@@ -1,0 +1,20 @@
+/*
+ * ConnectAble.work logo, from the brand sheet (2026-09-06):
+ * gray #5c5c5b field, "Connect" in dark gray green #172d1c,
+ * "Able" and ".work" in white. Typeface: Poppins (--font-brand, root layout).
+ */
+.wordmark {
+  --wm-gray: #5c5c5b; --wm-green: #172d1c; --wm-white: #ffffff;
+  display: inline-flex; flex-direction: column; align-items: flex-end;
+  width: max-content; box-sizing: border-box;
+  padding: .5em .66em .46em; border-radius: .3em;
+  background: var(--wm-gray); color: var(--wm-white);
+  font-family: var(--font-brand, "Poppins"), var(--font-editorial, "Montserrat"), system-ui, sans-serif;
+  font-size: var(--wordmark-size, 1.3rem); font-style: normal; font-weight: 400;
+  line-height: .95; letter-spacing: normal; text-align: left; text-transform: none;
+  -webkit-font-smoothing: antialiased;
+}
+.name { display: flex; white-space: nowrap; letter-spacing: -.035em; }
+.name > [data-part="connect"] { color: var(--wm-green); font-weight: 600; }
+.name > [data-part="able"] { color: var(--wm-white); font-weight: 300; }
+.work { font-size: .26em; font-weight: 400; letter-spacing: .06em; line-height: 1; margin-top: .45em; padding-right: .1em; white-space: nowrap; }
