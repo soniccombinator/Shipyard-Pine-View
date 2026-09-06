@@ -18,19 +18,24 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   if (!parsed.success) return { fieldErrors: firstFieldErrors(parsed.error) };
   const { email, password, full_name, role } = parsed.data;
 
+  // Employees and employers each get a guided setup at /onboarding (it
+  // branches by role -- see src/app/onboarding/page.tsx). There's no
+  // mentor onboarding yet, so mentors go straight to their dashboard.
+  const postSignupPath = role === "mentor" ? "/app" : "/onboarding";
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { full_name, role },
-      emailRedirectTo: `${siteUrl()}/auth/callback?next=${role === "employee" ? "/onboarding" : "/app"}`,
+      emailRedirectTo: `${siteUrl()}/auth/callback?next=${postSignupPath}`,
     },
   });
   if (error) return { error: friendlyAuthError(error.message) };
 
   // With email confirmation off the user is signed in immediately.
-  if (data.session) redirect(role === "employee" ? "/onboarding" : "/app");
+  if (data.session) redirect(postSignupPath);
   redirect(`/check-inbox?email=${encodeURIComponent(email)}`);
 }
 

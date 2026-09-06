@@ -14,6 +14,7 @@
  */
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
+import mammoth from "mammoth";
 import { HistoryKind } from "@/lib/domain";
 
 let client: Anthropic | null = null;
@@ -114,6 +115,18 @@ export async function parseResumeFromText(text: string): Promise<ParsedResume> {
   }
   const input = toolUse.input as ParsedResume;
   return { abilities: input.abilities ?? [], history: input.history ?? [], headline: input.headline, city: input.city, state: input.state, about: input.about };
+}
+
+/**
+ * For a .doc/.docx resume, sent as base64. Claude's document API doesn't
+ * read Word files directly (only PDF/plain text/images), so we extract the
+ * text ourselves first and reuse the same text path -- same prompt, same
+ * "never invent a fact" rules, no separate code path to keep in sync.
+ */
+export async function parseResumeFromDocxBase64(base64Docx: string): Promise<ParsedResume> {
+  const buffer = Buffer.from(base64Docx, "base64");
+  const { value: text } = await mammoth.extractRawText({ buffer });
+  return parseResumeFromText(text);
 }
 
 /** For a PDF resume, sent as base64 -- no newlines in the string. */

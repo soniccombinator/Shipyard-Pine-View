@@ -6,6 +6,42 @@ import type { HistoryItem } from "@/lib/domain";
 import type { ParsedResume } from "@/lib/resume-parse";
 import { createClient } from "@/lib/supabase/server";
 
+const RESUME_EXT_BY_MIME: Record<string, string> = {
+  "application/pdf": "pdf",
+  "application/msword": "doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  "text/plain": "txt",
+};
+
+/**
+ * Uploads the person's actual resume file to their private Storage folder
+ * and records where it landed. Separate from parsing (resume-parse.ts):
+ * this keeps the original file on hand even though what gets read into the
+ * profile is only ever the extracted, person-approved fields.
+ */
+export async function uploadResumeFile(formData: FormData): Promise<{ error?: string; success?: string }> {
+  const file = formData.get("file");
+  if (!(file instanceof File)) return { error: "No file received." };
+
+  const ext = RESUME_EXT_BY_MIME[file.type];
+  if (!ext) return { error: "Please upload a PDF, Word, or plain text file." };
+
+  const { userId } = await requireRole("employee");
+  const supabase = await createClient();
+  const path = `${userId}/resume.${ext}`;
+  const { error: uploadError } = await supabase.storage.from("resumes").upload(path, file, {
+    contentType: file.type,
+    upsert: true,
+  });
+  if (uploadError) return { error: "We couldn't upload that file. Please try again." };
+
+  const { error: dbError } = await supabase.from("employee_profiles").update({ resume_path: path }).eq("user_id", userId);
+  if (dbError) return { error: "Uploaded, but couldn't save it to your profile. Please try again." };
+
+  revalidatePath("/app/profile");
+  return { success: "Resume uploaded." };
+}
+
 /**
  * Applies a parsed resume to the signed-in employee's own profile, merging
  * rather than overwriting: new abilities are added to the existing list

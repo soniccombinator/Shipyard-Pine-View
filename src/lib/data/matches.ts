@@ -22,6 +22,8 @@ export type CandidateMatch = {
   volunteer: HistoryItem[];
   passportSlug: string | null;
   passportPublic: boolean;
+  resumePath: string | null;
+  videoPath: string | null;
   myFeedback: FeedbackValue | null;
   theirFeedback: FeedbackValue | null;
 };
@@ -47,7 +49,9 @@ export async function getCandidatesForJob(jobId: string, viewerId: string): Prom
     supabase.from("profiles").select("id, full_name").in("id", ids),
     supabase
       .from("employee_profiles")
-      .select("user_id, headline, about, city, state, remote_preference, abilities, accommodations, availability, awards, education, volunteer, passport_slug, passport_public")
+      .select(
+        "user_id, headline, about, city, state, remote_preference, abilities, accommodations, availability, awards, education, volunteer, passport_slug, passport_public, resume_path, video_path"
+      )
       .in("user_id", ids),
     supabase.from("match_feedback").select("match_id, user_id, value").in("match_id", matches.map((m) => m.id as string)),
   ]);
@@ -78,6 +82,8 @@ export async function getCandidatesForJob(jobId: string, viewerId: string): Prom
       volunteer: e.volunteer ?? [],
       passportSlug: e.passport_slug ?? null,
       passportPublic: Boolean(e.passport_public),
+      resumePath: e.resume_path ?? null,
+      videoPath: e.video_path ?? null,
       myFeedback: feedbackFor(fb, m.id as string, viewerId),
       theirFeedback: feedbackFor(fb, m.id as string, e.user_id as string),
     });

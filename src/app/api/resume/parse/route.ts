@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { parseResumeFromPdfBase64, parseResumeFromText } from "@/lib/resume-parse";
+import { parseResumeFromDocxBase64, parseResumeFromPdfBase64, parseResumeFromText } from "@/lib/resume-parse";
 
 /**
  * Parses a resume and returns suggested profile fields. Does not save
@@ -8,8 +8,8 @@ import { parseResumeFromPdfBase64, parseResumeFromText } from "@/lib/resume-pars
  * accept, edit, or reject it (same rule the Passport Guide agent already
  * follows for about_raw/about).
  *
- * Body: either { text: string } for a plain-text/.docx-extracted resume, or
- * { pdfBase64: string } for a PDF sent straight through.
+ * Body: { text: string } for pasted plain text, { pdfBase64: string } for an
+ * uploaded PDF, or { docxBase64: string } for an uploaded .doc/.docx file.
  */
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
@@ -21,14 +21,16 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => null);
-  if (!body?.text && !body?.pdfBase64) {
-    return NextResponse.json({ error: "text or pdfBase64 is required" }, { status: 400 });
+  if (!body?.text && !body?.pdfBase64 && !body?.docxBase64) {
+    return NextResponse.json({ error: "text, pdfBase64, or docxBase64 is required" }, { status: 400 });
   }
 
   try {
     const parsed = body.pdfBase64
       ? await parseResumeFromPdfBase64(body.pdfBase64)
-      : await parseResumeFromText(body.text);
+      : body.docxBase64
+        ? await parseResumeFromDocxBase64(body.docxBase64)
+        : await parseResumeFromText(body.text);
     return NextResponse.json({ parsed });
   } catch (err) {
     return NextResponse.json(

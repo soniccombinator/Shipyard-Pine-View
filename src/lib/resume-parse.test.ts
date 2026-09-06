@@ -14,7 +14,12 @@ vi.mock("@anthropic-ai/sdk", () => ({
   },
 }));
 
-import { parseResumeFromText } from "./resume-parse";
+const mockExtractRawText = vi.hoisted(() => vi.fn());
+vi.mock("mammoth", () => ({
+  default: { extractRawText: mockExtractRawText },
+}));
+
+import { parseResumeFromDocxBase64, parseResumeFromText } from "./resume-parse";
 
 describe("parseResumeFromText", () => {
   beforeEach(() => {
@@ -73,5 +78,27 @@ describe("parseResumeFromText", () => {
     const call = mockCreate.mock.calls[0][0];
     expect(call.tool_choice).toEqual({ type: "tool", name: "submit_resume_summary" });
     expect(call.tools[0].name).toBe("submit_resume_summary");
+  });
+});
+
+describe("parseResumeFromDocxBase64", () => {
+  beforeEach(() => {
+    mockCreate.mockReset();
+    mockExtractRawText.mockReset();
+    vi.stubEnv("ANTHROPIC_API_KEY", "test-key");
+  });
+
+  it("extracts text with mammoth first, then reuses the same text-parsing path", async () => {
+    mockExtractRawText.mockResolvedValue({ value: "Resume text extracted from the .docx" });
+    mockCreate.mockResolvedValue({
+      content: [{ type: "tool_use", name: "submit_resume_summary", input: { abilities: ["stocking shelves"], history: [] } }],
+    });
+
+    const result = await parseResumeFromDocxBase64(Buffer.from("fake docx bytes").toString("base64"));
+
+    expect(mockExtractRawText).toHaveBeenCalledWith({ buffer: expect.any(Buffer) });
+    const userMessage = mockCreate.mock.calls[0][0].messages[0].content as string;
+    expect(userMessage).toContain("Resume text extracted from the .docx");
+    expect(result.abilities).toEqual(["stocking shelves"]);
   });
 });

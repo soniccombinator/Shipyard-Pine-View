@@ -2,6 +2,7 @@ import { PageHeader } from "@/components/page-header";
 import { EmployeeProfileForm } from "@/components/profile/employee-profile-form";
 import { HistoryEditor } from "@/components/profile/history-editor";
 import { ResumeImport } from "@/components/profile/resume-import";
+import { WorkMediaUpload } from "@/components/profile/work-media-upload";
 import { requireRole } from "@/lib/data/profile";
 import type { EmployeePrivate, EmployeeProfile } from "@/lib/domain";
 import { createClient } from "@/lib/supabase/server";
@@ -25,11 +26,13 @@ export default async function ProfilePage() {
       <PageHeader kicker="Profile" title="Edit your profile" description="Everything here goes on your Ability Passport, except pay." />
       <div className="flex flex-col gap-6">
         <p className="ap-rule">Import</p>
-        <ResumeImport />
+        <ResumeImport resumePath={p?.resume_path ?? null} />
         <p className="ap-rule">Your details</p>
         <EmployeeProfileForm profile={p} priv={(priv as EmployeePrivate | null) ?? null} fullName={fullName} />
         <p className="ap-rule">History</p>
         <HistoryEditor awards={p?.awards ?? []} education={p?.education ?? []} volunteer={p?.volunteer ?? []} />
+        <p className="ap-rule">Show your work</p>
+        <WorkMediaUpload videoPath={p?.video_path ?? null} />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { BreakdownList } from "@/components/match/breakdown-list";
 import { FeedbackButtons } from "@/components/match/feedback-buttons";
 import { InterviewCopilot } from "@/components/match/interview-copilot";
 import { MatchRing } from "@/components/match/match-ring";
+import { ViewMediaButton } from "@/components/media/view-media-button";
 import { PageHeader } from "@/components/page-header";
 import { PassportCard } from "@/components/passport/passport-card";
 import { Button } from "@/components/ui/button";
@@ -91,6 +92,25 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
               )}
             </CardContent>
           </Card>
+          {(match.resumePath || match.videoPath) && (
+            <Card className="ap-fade ap-fade-1">
+              <CardHeader>
+                <CardTitle>See for yourself</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-3">
+                {match.resumePath && (
+                  <ViewMediaButton bucket="resumes" path={match.resumePath}>
+                    View resume
+                  </ViewMediaButton>
+                )}
+                {match.videoPath && (
+                  <ViewMediaButton bucket="videos" path={match.videoPath}>
+                    View them at work
+                  </ViewMediaButton>
+                )}
+              </CardContent>
+            </Card>
+          )}
           <FeedbackButtons matchId={match.matchId} current={match.myFeedback} back={`${back}/${match.employeeId}`} vertical />
           <InterviewCopilot jobId={j.id} />
           {match.passportPublic && match.passportSlug && (

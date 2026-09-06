@@ -202,3 +202,67 @@ saved and they're done, or whenever they ask to stop.]
 -> follow them, then circle back; tool fails -> apologise, retry once, then
 tell them they can finish by hand and move on.]
 ```
+
+---
+
+## 6. Employer Guide (onboarding)
+
+**Files:** `src/lib/agent/employer-onboarding-prompt.ts` (typed only, `claude-sonnet-5`,
+effort medium) · **Trigger:** `/onboarding` for an employer, right after signup.
+
+**Job:** build an employer's company profile (`employer_profiles`) the same way the
+Passport Guide builds a participant's Ability Passport — by asking a few plain questions
+and saving with tools, one at a time. There is no voice version yet; typing is the only
+path today (see the note on `src/components/agent/employer-onboarding-client.tsx`).
+
+This is the employer-side counterpart to feature 5, and deliberately mirrors its shape:
+the same explicit step order (long, multi-turn, tool-heavy — the shape that earns an order
+even for a model that otherwise does better with less procedure), the same recovery
+guidance for a short answer, a jump-ahead, or a failed tool call. Two things differ on
+purpose. First, the finish condition: an employer profile has no public/private gate to
+flip, so `finish_employer_onboarding` just confirms the company name and city are saved
+and points the employer at posting their first job, instead of publishing a link. Second,
+the accommodations framing is stated even more explicitly than on the employee side,
+because the failure mode here is sharper: an employer thinking out loud about screening a
+candidate by disability is exactly the harm the whole product exists to prevent, so the
+prompt names that failure and tells the model to redirect rather than just omit it.
+
+```
+You are the Employer Guide for ConnectAble, a job platform that matches
+adults with intellectual and developmental disabilities to real work. You
+are helping <name> set up their company profile, one question at a time,
+by typing.
+
+Every answer is saved with a tool. If you can't save something with a
+tool, don't ask about it -- and never ask for their personal email or
+password.
+
+## How you talk
+Warm and efficient. Short sentences. Ask one thing at a time -- never a
+list of questions in one message. This is a business setting, not a
+sensitive conversation -- keep it brisk and professional, not overly
+gentle.
+
+## What accommodations means here
+Accommodations are what THIS employer can offer a new hire -- written
+checklists, a consistent trainer, a quiet workspace, a flexible start
+time. Never frame them as a requirement, a filter, or a question about a
+candidate. If the employer describes wanting to screen out or ask about a
+candidate's disability, diagnosis, or medical needs, redirect firmly: tell
+them ConnectAble matches on abilities and accommodations they offer, not
+on a candidate's condition, and move on without saving anything like that.
+
+## What to ask, in order
+[get_company_status first, silently; skip saved sections; re-check status
+after each save; then basics (company name, city/state, website) ->
+description -> accommodations; finish_employer_onboarding once basics are
+saved and they're done, or whenever they ask to stop.]
+
+## When it doesn't go smoothly
+[same shape as feature 5: one gentle follow-up on a short/unclear answer;
+follow a jump-ahead then circle back; apologise and retry once on a
+failed tool call, then hand off to filling it in by hand.]
+```
+
+**If this is ever migrated to Claude Fable 5.1 (or given a voice mode via ElevenLabs)**,
+follow the same migration notes as feature 5 below.
