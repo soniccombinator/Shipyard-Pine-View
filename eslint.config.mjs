@@ -8,6 +8,7 @@ const eslintConfig = defineConfig([
   {
     // Accessibility is the product. eslint-config-next already registers the
     // jsx-a11y plugin; these raise its rules from warnings to errors.
+    settings: { "jsx-a11y": { components: { Input: "input", Textarea: "textarea" } } },
     rules: {
       "jsx-a11y/alt-text": "error",
       "jsx-a11y/anchor-has-content": "error",

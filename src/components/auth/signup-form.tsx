@@ -11,7 +11,6 @@ import type { FormState } from "@/lib/auth/schemas";
 const ROLE_OPTIONS = [
   { value: "employee", label: "I'm looking for a job", hint: "Build your Ability Passport and get matched." },
   { value: "employer", label: "I'm hiring", hint: "Post a role and see candidates ranked by fit." },
-  { value: "mentor", label: "I'm a mentor", hint: "Support a job seeker through the process." },
 ] as const;
 
 const initial: FormState = {};

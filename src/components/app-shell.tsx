@@ -3,7 +3,7 @@
 import type { ComponentType } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Briefcase, FilePlus2, Home, IdCard, LogOut, SquarePen, Star } from "lucide-react";
+import { Briefcase, FilePlus2, Home, IdCard, LogOut, SquarePen, Star, Handshake } from "lucide-react";
 import { ROLE_LABELS, RoleBadge } from "@/components/role-badge";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/wordmark";
@@ -19,12 +19,14 @@ const NAV: Record<Role, NavItem[]> = {
     { href: "/app/passport", label: "Passport", icon: IdCard },
     { href: "/app/profile", label: "Profile", icon: SquarePen },
     { href: "/app/matches", label: "Matches", icon: Star },
+    { href: "/app/commutes", label: "Commutes", icon: Handshake },
   ],
   employer: [
     { href: "/app/employer", label: "Jobs", icon: Briefcase },
     { href: "/app/employer/jobs/new", label: "Post a job", icon: FilePlus2 },
+    { href: "/app/commutes", label: "Commutes", icon: Handshake },
   ],
-  mentor: [{ href: "/app", label: "Home", icon: Home }],
+  mentor: [{ href: "/app/mentor", label: "Employees", icon: Home }, { href: "/app/commutes", label: "Commutes", icon: Handshake }],
 };
 
 /** Exact match for the section roots, prefix match for everything below them. */

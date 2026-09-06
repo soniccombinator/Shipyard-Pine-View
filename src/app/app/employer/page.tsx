@@ -53,7 +53,7 @@ export default async function EmployerPage() {
         </div>
         <div className="ap-stat">
           <div className="ap-stat-val">{totalCandidates}</div>
-          <div className="ap-label mt-0.5">Candidates</div>
+            <div className="ap-label mt-0.5">Candidate matches</div>
         </div>
         <div className="ap-stat">
           <div className="ap-stat-val">{totalStrong}</div>
@@ -61,6 +61,7 @@ export default async function EmployerPage() {
         </div>
       </div>
 
+      <div className="mb-6 rounded-xl border bg-purple-soft p-4"><h2 className="font-bold">Help candidates get to work</h2><p className="mt-1 text-sm">Coordinate with a mentor or offer a ride for an employee who has shared their commute.</p><Link className="mt-2 inline-block font-bold underline" href="/app/commutes">View shared commutes</Link></div>
       <div className="grid gap-8 lg:grid-cols-2">
         <section>
           <p className="ap-rule">Jobs</p>

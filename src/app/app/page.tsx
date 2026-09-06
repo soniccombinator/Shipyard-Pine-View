@@ -12,6 +12,7 @@ export const metadata = { title: "Home" };
 export default async function DashboardPage() {
   const profile = await requireProfile();
   if (profile.role === "employer") redirect("/app/employer");
+  if (profile.role === "mentor") redirect("/app/mentor");
   const supabase = await createClient();
   const first = profile.fullName.split(" ")[0] || "there";
 
@@ -47,6 +48,7 @@ export default async function DashboardPage() {
         </div>
 
         <p className="ap-rule">Next steps</p>
+        <div className="mb-4 rounded-xl border bg-green-soft p-4"><h2 className="font-bold">Need a ride to work?</h2><p className="mt-1 text-sm">Share your pickup location and destination. Your mentor or employer can help arrange a ride.</p><Link className="mt-2 inline-block font-bold underline" href="/app/commutes">Plan your commute</Link></div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Card className="ap-accent ap-accent-green ap-fade ap-fade-1">
@@ -83,15 +85,5 @@ export default async function DashboardPage() {
     );
   }
 
-  return (
-    <>
-      <PageHeader kicker="Your dashboard" title={`Hi ${first}`} description="Thank you for mentoring." />
-      <Card className="ap-accent ap-accent-coral ap-fade">
-        <CardHeader>
-          <CardTitle>Mentor tools are coming next</CardTitle>
-          <CardDescription>Soon you will see your mentees here and help keep their Passports up to date.</CardDescription>
-        </CardHeader>
-      </Card>
-    </>
-  );
+  return null;
 }

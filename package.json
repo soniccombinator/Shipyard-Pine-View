@@ -16,7 +16,10 @@
     "agent": "node scripts/agent.mjs",
     "agent:push": "node scripts/agent.mjs push",
     "agent:status": "node scripts/agent.mjs status",
-    "seed": "node --env-file=.env.local --experimental-strip-types scripts/seed.mts"
+    "seed": "node --env-file=.env.local --experimental-strip-types scripts/seed.mts",
+    "db:migrate": "node scripts/apply-migrations.mjs",
+    "test:smoke": "node scripts/smoke-test.mjs",
+    "test:stress": "node scripts/stress-test.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
@@ -30,6 +33,7 @@
     "mammoth": "^1.11.0",
     "next": "16.3.4",
     "next-themes": "^0.4.6",
+    "nodemailer": "^10.0.0",
     "qrcode.react": "^4.2.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -40,23 +44,29 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@elevenlabs/cli": "1.1.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@types/node": "^22.20.1",
+    "@types/nodemailer": "^7.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "jsdom": "^29.1.1",
+    "postgres": "^3.4.7",
     "supabase": "^2.116.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5",
     "vite": "^7.3.6",
     "vitest": "^5.0.0"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-win32-x64-msvc": "^1.2.7"
   }
 }

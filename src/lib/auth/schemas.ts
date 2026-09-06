@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { roleSchema } from "@/lib/domain";
 
 export type FormState = { error?: string; fieldErrors?: Record<string, string>; success?: string };
 
@@ -7,7 +6,7 @@ export const signUpSchema = z.object({
   full_name: z.string().trim().min(1, "Please tell us your name.").max(80, "That name is too long."),
   email: z.string().trim().toLowerCase().pipe(z.email("That email doesn't look right.")),
   password: z.string().min(8, "Use at least 8 characters."),
-  role: roleSchema,
+  role: z.enum(["employee", "employer"], { message: "Choose whether you are looking for work or hiring." }),
   // Checkbox: present as "on" when checked, absent from FormData otherwise.
   // This is a hackathon-prototype scoping rule, not a claim about who the
   // real program serves -- see docs/RISKS_AND_GAPS.md section 2e. Minors

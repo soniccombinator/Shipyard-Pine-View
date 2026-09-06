@@ -16,7 +16,7 @@ import { generateSmsReply } from "@/lib/comms/sms-agent";
  * match what the real payload sends before relying on it for a demo.
  *
  * Rules that matter on stage:
- *  - Return 200 immediately. GHL retries any non-2xx, and generating a
+ *  - Return 200 promptly for valid authenticated messages. GHL retries any non-2xx, and generating a
  *    reply inline would mean a judge sees the same text three times.
  *    `after()` runs the reply generation once the response has already
  *    gone out -- the correct pattern on a serverless platform, where a
@@ -24,36 +24,32 @@ import { generateSmsReply } from "@/lib/comms/sms-agent";
  *    response (the function can freeze or be torn down right after return).
  *  - De-duplicate on the provider's own message id (a retry must not
  *    enqueue a second reply) -- enforced by the unique constraint on
- *    sms_messages.provider_message_id in the migration. NOTE: Postgres
- *    UNIQUE allows many NULLs, so if the provider id is missing we cannot
- *    de-duplicate; we log and process once rather than risk a reply storm.
+ *    sms_messages.provider_message_id in the migration. Missing provider
+ *    IDs are rejected because those messages cannot be de-duplicated.
  *  - Authenticate the caller. This endpoint sends real SMS and spends real
  *    API budget on whatever `phone`/`message` it is handed, so an unsigned
  *    request must not be able to drive it.
  */
 export async function POST(req: NextRequest) {
-  const expectedSecret = process.env.HIGHLEVEL_INBOUND_WEBHOOK_SECRET;
+  const expectedSecret = process.env.HIGHLEVEL_INBOUND_WEBHOOK_SECRET || process.env.GHL_WEBHOOK_SECRET;
   if (expectedSecret) {
     const provided =
       req.headers.get("x-webhook-secret") ?? req.nextUrl.searchParams.get("secret") ?? "";
     if (provided !== expectedSecret) {
       console.warn("ghl webhook: rejected a request with a missing/incorrect secret");
-      return NextResponse.json({ ok: true }); // ack so GHL does not retry an attacker's payload for us
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
   } else {
-    console.warn("ghl webhook: HIGHLEVEL_INBOUND_WEBHOOK_SECRET is not set -- endpoint is unauthenticated");
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
   const body = await req.json().catch(() => null);
-  if (!body) return NextResponse.json({ ok: true });
+  if (!body) return NextResponse.json({ error: "validation_error" }, { status: 400 });
 
   const messageId: string | undefined = body.messageId ?? body.id;
   const phone: string | undefined = body.phone ?? body.contactPhone;
   const text: string | undefined = body.message ?? body.body;
-  if (!phone || !text) return NextResponse.json({ ok: true });
-  if (!messageId) {
-    console.warn("ghl webhook: inbound message has no provider id -- cannot de-duplicate this one");
-  }
+  if (!phone || !text || !messageId) return NextResponse.json({ error: "validation_error" }, { status: 400 });
 
   const supabase = createAdminClient();
 

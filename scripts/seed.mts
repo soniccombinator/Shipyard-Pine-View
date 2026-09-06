@@ -4,7 +4,7 @@
  *   npm run seed
  *
  * Creates (or reuses) demo accounts through the auth admin API, fills in
- * their profiles, posts two jobs, and computes matches. Safe to re-run.
+ * their profiles, posts 25 jobs, and computes matches. Safe to re-run.
  * All demo accounts share the password "connectable-demo".
  */
 import { createClient } from "@supabase/supabase-js";
@@ -138,6 +138,23 @@ const EMPLOYEES: Employee[] = [
   },
 ];
 
+const EXTRA_EMPLOYEES: Employee[] = [
+  ['maya', 'Maya Chen', 'Reliable hospitality teammate', ['Prepare a meeting room', 'Fold towels and linens', 'Complete a cleaning checklist']],
+  ['devon', 'Devon Williams', 'Positive warehouse and delivery helper', ['Pack a shipment', 'Apply shipping labels', 'Keep aisles clear']],
+  ['sofia', 'Sofia Martinez', 'Patient office assistant with an eye for detail', ['Scan a document', 'Enter data accurately', 'Sort incoming mail']],
+  ['jamal', 'Jamal Carter', 'Friendly customer service team member', ['Welcome a customer', 'Offer directions', 'Thank a customer']],
+  ['lily', 'Lily Nguyen', 'Focused café and food prep teammate', ['Wash produce', 'Prepare cold foods', 'Clean a coffee station']],
+  ['noah', 'Noah Thompson', 'Dependable groundskeeping assistant', ['Water plants', 'Pull weeds', 'Collect yard debris']],
+  ['ava', 'Ava Robinson', 'Organized digital workplace assistant', ['Use business email', 'Enter information in a form', 'Follow a digital checklist']],
+].map(([slug, fullName, headline, abilities], index) => ({
+  email: `${slug}@connectable.demo`, full_name: fullName as string, slug: `${slug}-demo`, headline: headline as string,
+  about: `${fullName} is ready to contribute in a structured, supportive workplace.`, about_raw: `I like doing useful work and learning each task step by step.`,
+  city: index % 2 ? 'Bradenton' : 'Sarasota', state: 'FL', remote_preference: index === 6 ? 'either' : 'in_person',
+  abilities: abilities as string[], accommodations: ['Written instructions', 'Predictable schedule'],
+  availability: ['Weekday mornings', 'Weekday afternoons'], awards: [], education: [], volunteer: [], salary_min: 14, salary_max: 19,
+}));
+EMPLOYEES.push(...EXTRA_EMPLOYEES);
+
 const EMPLOYER = {
   email: "employer@connectable.demo",
   full_name: "Dana Whitfield",
@@ -148,6 +165,16 @@ const EMPLOYER = {
   state: "FL",
   accommodations_offered: ["Written instructions", "Regular schedule", "Job coach visits", "Clear step-by-step tasks"],
 };
+
+const EMPLOYERS = [EMPLOYER, ...[
+  ['Suncoast Hospitality', 'Morgan Reed'], ['Sarasota Garden Center', 'Alex Patel'], ['Manatee Distribution', 'Taylor Kim'],
+  ['Bayfront Offices', 'Casey Johnson'], ['Harbor Café Group', 'Jamie Rivera'], ['Community Market', 'Robin Davis'],
+  ['Gulfside Services', 'Cameron Wilson'],
+].map(([company_name, full_name], index) => ({
+  email: `employer${index + 2}@connectable.demo`, full_name, company_name,
+  description: `${company_name} offers clear training, supportive supervisors, and inclusive opportunities.`, website: 'https://example.com',
+  city: index % 2 ? 'Bradenton' : 'Sarasota', state: 'FL', accommodations_offered: ['Written instructions', 'Predictable schedule', 'Visual instructions'],
+}))];
 
 const JOBS = [
   {
@@ -178,6 +205,22 @@ const JOBS = [
   },
 ];
 
+const EXTRA_JOB_TITLES = [
+  'Stockroom Assistant', 'Café Prep Assistant', 'Dishroom Attendant', 'Guest Services Helper', 'Housekeeping Assistant',
+  'Event Setup Assistant', 'Garden Center Helper', 'Landscape Crew Assistant', 'Package Sorter', 'Shipping Assistant',
+  'Customer Welcome Associate', 'Cart Attendant', 'Checkout Assistant', 'Mailroom Assistant', 'Document Scanning Clerk',
+  'Data Entry Assistant', 'Reception Support', 'Office Supply Assistant', 'Delivery Helper', 'Community Center Assistant',
+  'Food Bank Warehouse Helper', 'Library Shelving Assistant', 'Pet Care Assistant',
+];
+const ALL_JOBS = [...JOBS, ...EXTRA_JOB_TITLES.map((title, index) => ({
+  title,
+  description: `Support the ${title.toLowerCase()} team with clear daily tasks and hands-on training.`,
+  abilities_required: index % 3 === 0 ? ['Follow a multi-step direction', 'Complete an assigned team role'] : index % 3 === 1 ? ['Complete a cleaning checklist', 'Being on time'] : ['Enter information in a form', 'Ask a clarifying question'],
+  city: index % 2 ? 'Bradenton' : 'Sarasota', state: 'FL', remote: 'in_person',
+  availability: ['Weekday mornings', 'Weekday afternoons'], salary_min: 15, salary_max: 19,
+  accommodations_offered: ['Written instructions', 'Predictable schedule', 'Visual instructions'], status: 'open',
+}))];
+
 const MENTOR = { email: "mentor@connectable.demo", full_name: "Sam Ortiz" };
 
 async function ensureUser(email: string, full_name: string, role: string): Promise<string> {
@@ -190,6 +233,7 @@ async function ensureUser(email: string, full_name: string, role: string): Promi
     password: DEMO_PASSWORD,
     email_confirm: true,
     user_metadata: { full_name, role },
+    app_metadata: { connectable_role: role },
   });
   if (error || !data.user) throw error ?? new Error("no user returned");
   return data.user.id;
@@ -205,20 +249,22 @@ async function must<T>(
 }
 
 async function main() {
-  const employerId = await ensureUser(EMPLOYER.email, EMPLOYER.full_name, "employer");
-  await must(
-    "employer profile",
-    admin.from("employer_profiles").upsert(
-      { user_id: employerId, company_name: EMPLOYER.company_name, description: EMPLOYER.description, website: EMPLOYER.website, city: EMPLOYER.city, state: EMPLOYER.state, accommodations_offered: EMPLOYER.accommodations_offered },
+  const employerIds: string[] = [];
+  for (const employer of EMPLOYERS) {
+    const employerId = await ensureUser(employer.email, employer.full_name, "employer");
+    employerIds.push(employerId);
+    await must("employer profile", admin.from("employer_profiles").upsert(
+      { user_id: employerId, company_name: employer.company_name, description: employer.description, website: employer.website, city: employer.city, state: employer.state, accommodations_offered: employer.accommodations_offered },
       { onConflict: "user_id" },
-    ),
-  );
+    ));
+  }
 
   const employeeIds: string[] = [];
   for (const e of EMPLOYEES) {
     const id = await ensureUser(e.email, e.full_name, "employee");
     employeeIds.push(id);
-    const { email: _email, full_name: _name, slug, salary_min, salary_max, ...profile } = e;
+    const { slug, salary_min, salary_max } = e;
+    const profile = Object.fromEntries(Object.entries(e).filter(([key]) => !['email', 'full_name', 'slug', 'salary_min', 'salary_max'].includes(key)));
     await must(
       `profile ${e.full_name}`,
       admin.from("employee_profiles").upsert({ user_id: id, ...profile, passport_slug: slug, passport_public: true, searchable: true }, { onConflict: "user_id" }),
@@ -227,11 +273,12 @@ async function main() {
   }
 
   const mentorId = await ensureUser(MENTOR.email, MENTOR.full_name, "mentor");
-  await must("mentor profile", admin.from("mentor_profiles").upsert({ user_id: mentorId, bio: "Job coach with Inclusion Revolution since 2021.", background_check: "cleared" }, { onConflict: "user_id" }));
-  await must("mentorship", admin.from("mentorships").upsert({ mentor_id: mentorId, employee_id: employeeIds[0], status: "active" }, { onConflict: "mentor_id,employee_id" }));
+  await must("mentor profile", admin.from("mentor_profiles").upsert({ user_id: mentorId, bio: "Job coach with Inclusion Revolution since 2021.", background_check: "cleared", capacity: 20 }, { onConflict: "user_id" }));
+  for (const employeeId of employeeIds) await must("mentorship", admin.from("mentorships").upsert({ mentor_id: mentorId, employee_id: employeeId, status: "active", consent_granted_at: new Date().toISOString() }, { onConflict: "mentor_id,employee_id" }));
 
   const jobIds: string[] = [];
-  for (const job of JOBS) {
+  for (const [index, job] of ALL_JOBS.entries()) {
+    const employerId = employerIds[index % employerIds.length];
     const { data: existing } = await admin.from("jobs").select("id").eq("employer_id", employerId).eq("title", job.title).maybeSingle();
     if (existing) {
       await must(`job ${job.title}`, admin.from("jobs").update(job).eq("id", existing.id));
@@ -257,11 +304,11 @@ async function main() {
   const lot = rows.find((r) => r.job_id === jobIds[0] && r.employee_id === employeeIds[0]);
   if (lot) {
     const { data: m } = await admin.from("matches").select("id").eq("job_id", lot.job_id).eq("employee_id", lot.employee_id).maybeSingle();
-    if (m) await must("feedback", admin.from("match_feedback").upsert({ match_id: m.id, user_id: employerId, value: "interested" }, { onConflict: "match_id,user_id" }));
+    if (m) await must("feedback", admin.from("match_feedback").upsert({ match_id: m.id, user_id: employerIds[0], value: "interested" }, { onConflict: "match_id,user_id" }));
   }
 
-  console.log(`Seeded 1 employer, ${EMPLOYEES.length} employees, 1 mentor, ${JOBS.length} jobs, ${rows.length} matches.`);
-  console.log(`Log in as ${EMPLOYER.email} or ${EMPLOYEES[0].email} with password "${DEMO_PASSWORD}".`);
+  console.log(`Seeded ${EMPLOYERS.length} employers, ${EMPLOYEES.length} employees, 1 mentor, ${ALL_JOBS.length} jobs, ${rows.length} matches.`);
+  console.log(`Log in as ${EMPLOYERS[0].email} or ${EMPLOYEES[0].email} with password "${DEMO_PASSWORD}".`);
 }
 
 main().catch((e) => {

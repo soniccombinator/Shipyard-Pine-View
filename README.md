@@ -36,6 +36,19 @@ supabase/migrations/     schema, RLS, storage buckets
 docs/                    kickoff notes and design spec
 ```
 
+Phase 0 operations and Phase 2 mentor APIs live under `src/lib/backend/` and
+`src/app/api/{admin,coach,cron,moderation,webhooks}`. See
+`docs/BACKEND_ARCHITECTURE.md`, `docs/DATABASE_SETUP.md`, and
+`docs/INTERNAL_WEBSITE_TESTING.md` for the design, database setup, and internal
+acceptance flow.
+
+```bash
+npm run db:migrate       # requires DATABASE_URL
+npm run seed             # requires .env.local and the Phase 0/2 migration
+npm run test:smoke       # production HTTP checks
+npm run test:stress      # 6,000 concurrent-request checks
+```
+
 ## Language rules for all UI copy
 
 - **Accommodations** for a need. **Ability / abilities** for a skillset.

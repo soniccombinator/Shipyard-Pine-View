@@ -16,6 +16,9 @@ const BASE_FIELDS = {
 };
 
 describe("signUpSchema age gate", () => {
+  it("requires an invitation for mentors even after age confirmation", () => {
+    expect(signUpSchema.safeParse({ ...BASE_FIELDS, role: "mentor", age_confirmed: "on" }).success).toBe(false);
+  });
   it("rejects signup when the age checkbox was never checked (field absent from FormData)", () => {
     const result = signUpSchema.safeParse({ ...BASE_FIELDS });
     expect(result.success).toBe(false);
