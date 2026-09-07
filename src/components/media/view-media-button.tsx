@@ -14,7 +14,7 @@ export function ViewMediaButton({
   path,
   children,
 }: {
-  bucket: "resumes" | "videos";
+  bucket: "resumes" | "videos" | "interviews";
   path: string;
   children: React.ReactNode;
 }) {
