@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { LiveInterviewRecorder } from "@/components/match/live-interview-recorder";
 
 type CopilotResult = {
   suggestedQuestions: string[];
@@ -30,7 +31,15 @@ function stripStrayMarkdown(text: string): string {
  * is not the participant-facing "ethical Cluely" idea from the team's
  * original brainstorm.
  */
-export function InterviewCopilot({ jobId }: { jobId: string }) {
+export function InterviewCopilot({
+  jobId,
+  matchId,
+  recordingPath = null,
+}: {
+  jobId: string;
+  matchId?: string;
+  recordingPath?: string | null;
+}) {
   const [transcript, setTranscript] = useState("");
   const [result, setResult] = useState<CopilotResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -63,8 +72,15 @@ export function InterviewCopilot({ jobId }: { jobId: string }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <p className="text-sm text-muted-foreground">
-          Paste notes from the interview so far. This is for you only -- the candidate never sees it.
+          Record the call live, or type notes as you go. This is for you only -- the candidate never sees it.
         </p>
+        {matchId && (
+          <LiveInterviewRecorder
+            matchId={matchId}
+            recordingPath={recordingPath}
+            onLiveTranscript={(text) => setTranscript((prev) => (prev ? `${prev} ${text}` : text))}
+          />
+        )}
         <Textarea
           rows={4}
           value={transcript}

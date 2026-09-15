@@ -112,7 +112,7 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
             </Card>
           )}
           <FeedbackButtons matchId={match.matchId} current={match.myFeedback} back={`${back}/${match.employeeId}`} vertical />
-          <InterviewCopilot jobId={j.id} />
+          <InterviewCopilot jobId={j.id} matchId={match.matchId} recordingPath={match.recordingPath} />
           {match.passportPublic && match.passportSlug && (
             <Button variant="outline" render={<Link href={`/p/${match.passportSlug}`} />}>
               Open their public Passport

@@ -21,29 +21,20 @@
 .headerCta { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 13px; border-radius: 999px; background: var(--ink); color: #fff; font-size: .72rem; font-weight: 700; white-space: nowrap; transition: background .2s; }
 .headerCta:hover { background: #3d5a49; }
 
-/* Intro: Nick in his own words, then the film */
-.intro { display: grid; gap: 26px; padding: 40px 5.5% 28px; }
+/* Intro */
+.intro { padding: 44px 5.5% 28px; }
 .eyebrow, .sectionLabel { display: flex; align-items: center; gap: 10px; font-family: var(--heading); text-transform: uppercase; font-size: .62rem; font-weight: 600; letter-spacing: .16em; color: var(--muted); }
 .liveDot { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); animation: pulse 2s ease-in-out infinite; }
 .intro h1 { margin-top: 18px; font-size: clamp(2.3rem, 9vw, 4.5rem); font-weight: 600; }
-.ownIntro { margin: 14px 0 0; max-width: 34ch; }
-.ownIntro p { font-family: var(--heading); font-size: clamp(1.15rem, 4.6vw, 1.7rem); font-weight: 500; letter-spacing: -.03em; line-height: 1.35; }
+.headline { margin-top: 12px; max-width: 34ch; font-size: clamp(1.05rem, 4.2vw, 1.5rem); line-height: 1.45; }
 .meta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; font-size: .85rem; color: var(--muted); }
 .meta span { display: inline-flex; align-items: center; gap: 6px; }
-.filmButton { position: relative; display: block; width: 100%; aspect-ratio: 16 / 10; padding: 0; border: 0; border-radius: 14px; overflow: hidden; background: #292a25; color: #fff; text-align: left; box-shadow: 0 18px 44px rgb(23 45 28 / 18%); }
-.filmPoster { object-fit: cover; object-position: 72% 38%; transition: transform .6s cubic-bezier(.2,.7,.3,1); }
-.filmButton:hover .filmPoster { transform: scale(1.03); }
-.filmShade { position: absolute; inset: 0; background: linear-gradient(0deg, rgb(22 26 23 / 85%) 0%, rgb(22 26 23 / 35%) 45%, rgb(22 26 23 / 0%) 75%); }
-.filmMeta { position: absolute; left: 18px; right: 18px; bottom: 16px; display: flex; align-items: center; gap: 14px; }
-.filmMeta strong { display: block; font-family: var(--heading); font-size: 1.02rem; font-weight: 600; letter-spacing: -.02em; }
-.filmMeta small { display: block; margin-top: 3px; font-size: .74rem; color: #dcddd6; }
-.playCircle { display: grid; flex-shrink: 0; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: var(--orange); color: var(--ink); transition: transform .25s, background .25s; }
-.playCircle svg { margin-left: 3px; }
-.filmButton:hover .playCircle, .filmButton:focus-visible .playCircle { background: var(--mint); transform: scale(1.08); }
-.scrollHint { display: inline-flex; align-items: center; gap: 10px; font-size: .78rem; color: var(--muted); }
+.scrollHint { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; font-size: .78rem; color: var(--muted); }
 
 /* Scrolly section. The media panel is a direct grid child so `sticky` spans the chapters. */
 .story { display: grid; grid-template-columns: 1fr; align-items: start; }
+/* Most real Passports have no pinned media (see passport-story.tsx) -- one column, no gap to reserve. */
+.storyNoMedia { grid-template-columns: 1fr; }
 .mediaPanel { position: sticky; top: 0; z-index: 2; padding-bottom: 10px; background: var(--paper); }
 .mediaButton { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; max-height: 46svh; padding: 0; border: 0; overflow: hidden; background: #111; }
 .loop { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .35s ease; }
@@ -57,6 +48,10 @@
 .chapters { padding: 18px 5.5% 40px; }
 .chapter { min-height: 58svh; padding: 26px 0 38px; border-top: 1px solid var(--line); }
 .chapter:first-child { border-top: 0; }
+/* No pinned media to keep on screen -- the tall min-height was only there to
+   give the sticky video time to be visible; without it, let chapters be as
+   tall as their content. */
+.chapterCompact { min-height: 0; }
 .chapter h2 { margin-top: 14px; font-size: clamp(1.55rem, 6vw, 2.4rem); font-weight: 500; }
 .sectionLabel > span { display: inline-grid; place-items: center; width: 26px; height: 26px; border: 1px solid currentColor; border-radius: 50%; font-size: .52rem; letter-spacing: 0; transition: background .25s, border-color .25s; }
 .chapter[aria-current="true"] .sectionLabel { color: var(--deep); }
@@ -64,28 +59,14 @@
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 0; padding: 0; list-style: none; }
 .chips li { padding: 8px 14px; border-radius: 999px; background: var(--soft); color: var(--deep); font-size: .82rem; font-weight: 700; }
 .body { max-width: 58ch; margin-top: 20px; font-size: .95rem; line-height: 1.7; color: var(--muted); }
-.ownWords { margin: 22px 0 0; padding: 22px 22px 18px; border-left: 4px solid var(--orange); background: #fff; }
-.ownWords p { font-family: var(--heading); font-size: clamp(1.45rem, 6.2vw, 2.3rem); font-weight: 500; letter-spacing: -.035em; line-height: 1.25; }
-.ownWords footer { margin-top: 12px; font-size: .78rem; color: var(--muted); }
+.ownWords { margin: 26px 0 0; padding: 18px 20px; border-left: 4px solid var(--orange); background: #fff; }
+.ownWords p { font-family: var(--heading); font-size: clamp(1.25rem, 5vw, 1.7rem); font-weight: 500; letter-spacing: -.03em; }
+.ownWords footer { margin-top: 8px; font-size: .74rem; color: var(--muted); }
 .ownWords cite { font-style: italic; }
-.voice { margin: 24px 0 0; padding: 18px 20px; border-left: 4px solid var(--mint); background: #fff; }
-.voice p { font-size: 1.02rem; line-height: 1.55; }
-.voice footer { margin-top: 10px; font-size: .78rem; font-weight: 700; }
-.voice footer span { font-weight: 400; color: var(--muted); }
-.familyVoice { border-left-color: var(--deep); }
-.familyVoice p { font-family: var(--heading); font-size: clamp(1.05rem, 4.2vw, 1.35rem); font-weight: 500; letter-spacing: -.02em; line-height: 1.4; }
-.teamPhoto { margin: 22px 0 0; }
-.teamPhoto > div { position: relative; aspect-ratio: 3 / 2; overflow: hidden; border-radius: 12px; background: #d7d5cb; }
-.teamPhoto img { object-fit: cover; object-position: 72% 38%; }
-.teamPhoto figcaption { margin-top: 8px; font-size: .74rem; color: var(--muted); }
-.glance { padding: 44px 5.5% 40px; border-top: 1px solid var(--line); }
-.glance h2 { margin-top: 14px; font-size: clamp(1.55rem, 6vw, 2.2rem); font-weight: 500; }
-.glanceGrid { display: grid; gap: 8px 40px; }
-.glanceGrid .subhead:first-child { margin-top: 22px; }
-.timeline { display: flex; flex-direction: column; gap: 18px; margin: 14px 0 0; padding: 0; list-style: none; }
+.timeline { display: flex; flex-direction: column; gap: 18px; margin: 22px 0 0; padding: 0; list-style: none; }
 .timeline > li { padding-left: 18px; border-left: 2px solid var(--mint); }
-.timeline h4 { font-family: var(--heading); font-size: 1.05rem; font-weight: 600; letter-spacing: -.03em; }
-.timeline h4 span { font-weight: 400; color: var(--muted); }
+.timeline h3 { font-size: 1.05rem; font-weight: 600; }
+.timeline h3 span { font-weight: 400; color: var(--muted); }
 .period { margin-top: 2px; font-size: .78rem; color: var(--muted); }
 .timeline ul { margin-top: 8px; padding-left: 18px; font-size: .9rem; line-height: 1.6; }
 .subhead { display: flex; align-items: center; gap: 8px; margin-top: 30px; font-size: 1rem; font-weight: 600; }
@@ -134,18 +115,15 @@
 @media (min-width: 900px) {
   .header { padding: 16px 4.2%; }
   .logoLink { --wordmark-size: 1.2rem; }
-  .intro { grid-template-columns: 1.05fr 1fr; align-items: end; gap: 20px 6%; padding: 64px 4.2% 36px; }
+  .intro { max-width: 1400px; padding: 70px 4.2% 40px; }
   .intro h1 { font-size: clamp(3rem, 5.6vw, 5.2rem); }
-  .ownIntro p { font-size: clamp(1.25rem, 1.9vw, 1.7rem); }
-  .filmButton { aspect-ratio: 16 / 10; }
-  .scrollHint { grid-column: 1 / -1; }
-  .glance { padding: 64px 4.2% 56px; }
-  .glanceGrid { grid-template-columns: 1.2fr 1fr; gap: 0 6%; }
   .story { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 5%; padding: 0 4.2%; }
+  .storyNoMedia { grid-template-columns: 1fr; max-width: 640px; margin: 0 auto; }
   .mediaPanel { display: flex; align-items: center; height: 100svh; padding: 0; background: transparent; }
   .mediaButton { max-height: none; border-radius: 12px; box-shadow: 0 20px 50px rgb(23 45 28 / 18%); }
   .chapters { padding: 0; }
   .chapter { display: flex; flex-direction: column; justify-content: center; min-height: 92svh; padding: 12svh 0; }
+  .chapterCompact { min-height: 0; justify-content: flex-start; padding: 48px 0; }
   .chapter h2 { font-size: clamp(1.9rem, 2.8vw, 2.7rem); }
   .contact { grid-template-columns: 1fr auto; align-items: center; padding: 64px 4.2%; }
   .footer { padding: 28px 4.2%; }
